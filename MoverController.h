@@ -9,8 +9,10 @@
 #pragma once
 #include "cinder/Perlin.h"
 #include <list>
+#include "cinder/Vector.h"
 #include "MoverController.h"
 #include "Mover.h"
+#include "Predator.h"
 //#include "Predator.h"
 
 // ---DECLARATION---
@@ -31,15 +33,18 @@ public:
     void pullToCenter( const ci::Vec3f &center );
     
     // PREDATOR FUNCTIONS
-    /*
+    // /*
     std::list<Predator> mPredators;
-	void addPredators( int amt );
+	void addPredators( int amt, const ci::Vec2f &pos  );
     void applyForceToPredators( float zoneRadius, float lowerThresh, float higherThresh );
-    */
+    // */
     
     // PERLIN
 	ci::Perlin mPerlin;
 	
     void update( bool flatten );
 	void draw();
+    
+    //mVar Parameters set fron rferences by ButterflyFlockApp? howto...
+
 };

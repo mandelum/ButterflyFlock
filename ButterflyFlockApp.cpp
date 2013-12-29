@@ -22,6 +22,7 @@
 
 #define NUM_INITIAL_PARTICLES 1000
 #define NUM_PARTICLES_TO_SPAWN 15
+#define NUM_INITIAL_PREDATORS 1
 
 using namespace ci;
 using namespace ci::app;
@@ -67,6 +68,8 @@ class ButterflyFlockApp : public AppNative {
     
     bool				mCentralGravity;
 	bool				mFlatten;
+    //Could theese not be added to MoverController *also* as mVars instead of arguments to every func call
+
     
     bool				mSaveFrames;
     
@@ -124,16 +127,13 @@ void ButterflyFlockApp::setup()
 	
 	// CREATE MOVER CONTROLLER
 	mMoverController.addMovers( NUM_INITIAL_PARTICLES );
-	//mMoverController.addPredators( NUM_INITIAL_PREDATORS );
 }
-
-
 
 void ButterflyFlockApp::update()
 {
     if( mLowerThresh > mHigherThresh ) mHigherThresh = mLowerThresh;
     
-	//mMoverController.applyForceToPredators( mZoneRadius, 0.4f, 0.7f );
+	mMoverController.applyForceToPredators( mZoneRadius, 0.4f, 0.7f );
     
 	mMoverController.applyForceToMovers( mZoneRadius, mLowerThresh, mHigherThresh, mAttractStrength, mRepelStrength, mOrientStrength );
 	if( mCentralGravity ) mMoverController.pullToCenter( mCenter );
@@ -193,11 +193,6 @@ void ButterflyFlockApp::draw()
     }
 }
 
-void ButterflyFlockApp::mouseDown( MouseEvent event )
-{
-    
-}
-
 void ButterflyFlockApp::mouseMove( MouseEvent event ) {
     
     mMouseLoc = event.getPos();
@@ -208,6 +203,11 @@ void ButterflyFlockApp::mouseDrag( MouseEvent event ) {
     
     mouseMove( event );
     
+}
+
+void ButterflyFlockApp::mouseDown( MouseEvent event )
+{
+    mMoverController.addPredators( NUM_INITIAL_PREDATORS, mMouseLoc );
 }
 
 void ButterflyFlockApp::keyUp( KeyEvent event)
@@ -224,11 +224,12 @@ void ButterflyFlockApp::keyUp( KeyEvent event)
 
 void ButterflyFlockApp::keyDown( KeyEvent event )
 {
-	if( event.getChar() == 'p' ){
+	if( event.getChar() == '1' ){
 		mMoverController.addMovers( NUM_PARTICLES_TO_SPAWN );
 	} else if( event.getChar() == ' ' ){
 		mSaveFrames = !mSaveFrames;
 	}
+    
 }
 
 

@@ -16,6 +16,7 @@ using std::list;
 MoverController::MoverController()
 {
     mPerlin = Perlin( 4 );
+
 }
 
 // POLYMORPHISM with added array of pointers to different arrays of movers, then an extra for loop to go thorugh them, like, butterflies and predators?
@@ -90,7 +91,7 @@ void MoverController::applyForceToMovers( float zoneRadius, float lowerThresh, f
          }
          */
 		
-		// ADD PERLIN NOISE INFLUENCE
+		// ADD PERLIN NOISE INFLUENCE - Make separate function
         float scale = 0.002f; // Magic numbers inside code..
 		float multi = 0.01f;
 		Vec3f perlin = mPerlin.dfBm( p1->mPos * scale ) * multi;
@@ -98,7 +99,8 @@ void MoverController::applyForceToMovers( float zoneRadius, float lowerThresh, f
 		
 		
 		// CHECK WHETHER THERE IS ANY PARTICLE/PREDATOR INTERACTION
-    /*
+        ///*
+    
 		float eatDistSqrd = 50.0f;
 		float predatorZoneRadiusSqrd = zoneRadius * zoneRadius * 5.0f;
 		for( list<Predator>::iterator predator = mPredators.begin(); predator != mPredators.end(); ++predator ) {
@@ -121,15 +123,16 @@ void MoverController::applyForceToMovers( float zoneRadius, float lowerThresh, f
 				}
 			}
 		}
-		*/
+    
+		//*/
 	}
 	mMoversCentroid /= (float)mNumMovers;
 }
 
-/* PREDATOR FLOCK, SEEMS LIKE THIS SHOULD BE SOLVABLE THROUGH POLYMORPHISM!?! NOT THIS DOUBLING...
+// PREDATOR FLOCK, SEEMS LIKE THIS SHOULD BE SOLVABLE THROUGH POLYMORPHISM!?! NOT THIS DOUBLING...
 void MoverController::applyForceToPredators( float zoneRadius, float lowerThresh, float higherThresh )
 {
-	float twoPI = M_PI * 2.0f;
+    float twoPI = M_PI * 2.0f;
 	for( list<Predator>::iterator P1 = mPredators.begin(); P1 != mPredators.end(); ++P1 ){
         
 		list<Predator>::iterator P2 = P1;
@@ -170,16 +173,16 @@ void MoverController::applyForceToPredators( float zoneRadius, float lowerThresh
 		}
 	}
 }
- void ParticleController::addPredators( int amt )
+ void MoverController::addPredators( int amt, const Vec2f &pos )
  {
  for( int i=0; i<amt; i++ )
  {
- Vec3f pos = Rand::randVec3f() * Rand::randFloat( 500.0f, 750.0f );
+ //Vec3f pos = Rand::randVec3f() * Rand::randFloat( 500.0f, 750.0f );
  Vec3f vel = Rand::randVec3f();
- mPredators.push_back( Predator( pos, vel ) );
+ mPredators.push_back( Predator( Vec3f(pos, 0.0f), vel ) );
  }
  }
-*/
+
 
 void MoverController::pullToCenter( const ci::Vec3f &center )
 {
@@ -187,10 +190,11 @@ void MoverController::pullToCenter( const ci::Vec3f &center )
 	for( list<Mover>::iterator p = mMovers.begin(); p != mMovers.end(); ++p ){
 		p->pullToCenter( center );
 	}
-	/* // PREDATOR GRAVITY
-	for( list<Mover>::iterator p = mPredators.begin(); p != mPredators.end(); ++p ){
+	// PREDATOR GRAVITY
+	for( list<Predator>::iterator p = mPredators.begin(); p != mPredators.end(); ++p ){
 		p->pullToCenter( center );
-	}*/
+	}
+    
 }
 
 void MoverController::update( bool flatten )
@@ -204,22 +208,23 @@ void MoverController::update( bool flatten )
 			++p;
 		}
 	}
-	/*
+    
+    
 	for( list<Predator>::iterator p = mPredators.begin(); p != mPredators.end(); ++p ){
 		p->update( flatten );
-	}*/
+	}
+    
 }
 
 void MoverController::draw()
 {
 	// DRAW PREDATOR ARROWS
-    /*
+
 	for( list<Predator>::iterator p = mPredators.begin(); p != mPredators.end(); ++p ){
 		float hungerColor = 1.0f - p->mHunger;
 		gl::color( ColorA( 1.0f, hungerColor, hungerColor, 1.0f ) );
 		p->draw();
-	}
-    */
+	} 
 	
 	// DRAW MOVER ((ARROWS))
 	gl::color( ColorA( 1.0f, 1.0f, 1.0f, 1.0f ) );
