@@ -5,13 +5,19 @@
 //  Created by Robin Brandt on 2013-12-28.
 //
 //
+
 #include "cinder/app/AppNative.h"
 #include "cinder/Rand.h"
 #include "cinder/gl/gl.h"
+//#include "cinder/gl/GlslProg.h"
+#include "cinder/ObjLoader.h"
+#include "cinder/gl/Vbo.h"
+#include "cinder/Perlin.h"
 
 #include "Mover.h"
 
 using namespace ci;
+using namespace ci::app;
 using std::list;
 
 // Make mover more general, and move stuff to butterfly and other objects...
@@ -50,6 +56,28 @@ Mover::Mover( Vec3f pos, Vec3f vel, bool followed )
 	
 	mIsDead			= false;
 	mFollowed		= followed;
+    
+    
+    
+    ObjLoader loader( loadAsset( "butterfly.obj") );
+    loader.load( &mMesh, true );
+    
+    gl::VboMesh::Layout layout;
+    layout.setStaticIndices();
+    layout.setDynamicPositions();
+    mVBO = gl::VboMesh( mMesh, layout );
+    
+    mPerlin = Perlin( 3, 1023 );
+    
+    
+    mVertexNumber = mMesh.getNumVertices();
+    
+//    CameraPersp initialCam;
+//    initialCam.setPerspective( 45.0f, getWindowAspectRatio(), 0.1, 10000 );
+//    mMyCam.setCurrentCam( initialCam );
+    
+    mBendAmount = 0.0f;
+    
 }
 
 void Mover::pullToCenter( const Vec3f &center )
@@ -61,6 +89,8 @@ void Mover::pullToCenter( const Vec3f &center )
 	if( distToCenter > distThresh ){ // Pull to a center until the given threshold
 		dirToCenter.normalize();
 		float pullStrength = 0.00025f;
+        //float pullStrength = 0.0025f;
+
 		mVel -= dirToCenter * ( ( distToCenter - distThresh ) * pullStrength );
 	}
 }
@@ -115,9 +145,22 @@ void Mover::limitSpeed()
 
 void Mover::draw()
 {
-	glColor4f( mColor );
+	//glColor4f( mColor );
     // Draws an arrow
-	gl::drawVector( mPos - mVelNormal * mLength, mPos - mVelNormal * mLength * 0.75f, mLength * 0.7f, mRadius );
+	//gl::drawVector( mPos - mVelNormal * mLength, mPos - mVelNormal * mLength * 0.75f, mLength * 0.7f, mRadius );
+    
+    gl::color( Color(1,1,1) );
+    
+    gl::enableWireframe();
+    
+    //gl::setMatrices( mMyCam.getCamera() );
+    
+    //mShader.bind();
+    gl::translate( mPos);
+    gl::draw( mVBO );
+    //mShader.unbind();
+    
+    //mParams->draw();
 }
 
 void Mover::drawTail()
@@ -132,4 +175,20 @@ void Mover::addNeighborPos( Vec3f pos )
 {   // A bit usure why this method is needed?
 	mNeighborPos += pos;
 	mNumNeighbors ++;
+}
+
+
+void Mover::xformGeo()
+{
+    //float angleX = lmap(nuPos.x, -mDim.y / 2, mDim.y / 2, 0.0f, (float)M_PI );
+    //float angleZ = lmap(nuPos.z, -mDim.y / 2, mDim.y / 2, 0.0f, (float)M_PI );
+    //nuPos.y += (( sinf( angleX ) -1 ) + ( sinf( angleZ ) -1 ) ) * 0.3 * mLife ;
+    gl::VboMesh::VertexIter iter = mVBO.mapVertexBuffer();
+    for( int x=0; x < mVBO.getNumVertices(); ++x ) {
+        float noise = mPerlin.fBm( *(iter.getPositionPointer()) ) * 15.0f;
+        iter.setPosition( *(iter.getPositionPointer()) + Vec3f(noise, noise, noise) );
+        ++iter;
+    }
+    
+    
 }

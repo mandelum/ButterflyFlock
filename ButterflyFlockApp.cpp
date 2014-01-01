@@ -17,10 +17,10 @@
 #include "MoverController.h"
 
 // QUICKTIME MOVIE RECORDING INCLUDES
-#include "cinder/qtime/MovieWriter.h"
+//#include "cinder/qtime/MovieWriter.h"
 #include "cinder/Utilities.h"
 
-#define NUM_INITIAL_PARTICLES 1000
+#define NUM_INITIAL_PARTICLES 100
 #define NUM_PARTICLES_TO_SPAWN 15
 #define NUM_INITIAL_PREDATORS 1
 
@@ -44,12 +44,12 @@ class ButterflyFlockApp : public AppNative {
     void mouseDown( MouseEvent event );
     void mouseMove( MouseEvent event );
     void mouseDrag( MouseEvent event );
-    void keyUp( KeyEvent event);
+    //void keyUp( KeyEvent event);
     void keyDown( KeyEvent event );
     
     // QUICKTIME RECORDING FUNCTION & OBJECT
-    qtime::MovieWriter mMovieWriter;
-    void initMovieWriter();
+    //qtime::MovieWriter mMovieWriter;
+    //void initMovieWriter();
     
     // PARAMS, INTERFACE FOR TWEAKING
 	params::InterfaceGlRef	mParams;
@@ -188,9 +188,9 @@ void ButterflyFlockApp::draw()
 	gl::popModelView();
     
     // WRITE QUICKTIME MOVIE
-    if( mMovieWriter ){
-        mMovieWriter.addFrame( copyWindowSurface());
-    }
+    //if( mMovieWriter ){
+    //    mMovieWriter.addFrame( copyWindowSurface());
+    //}
 }
 
 void ButterflyFlockApp::mouseMove( MouseEvent event ) {
@@ -210,7 +210,8 @@ void ButterflyFlockApp::mouseDown( MouseEvent event )
     mMoverController.addPredators( NUM_INITIAL_PREDATORS, mMouseLoc );
 }
 
-void ButterflyFlockApp::keyUp( KeyEvent event)
+/*
+ void ButterflyFlockApp::keyUp( KeyEvent event)
 {
     if ( event.getChar() == 'm') {
         if (mMovieWriter) {
@@ -221,6 +222,7 @@ void ButterflyFlockApp::keyUp( KeyEvent event)
         }
     }
 }
+ */
 
 void ButterflyFlockApp::keyDown( KeyEvent event )
 {
@@ -233,7 +235,8 @@ void ButterflyFlockApp::keyDown( KeyEvent event )
 }
 
 
-void ButterflyFlockApp::initMovieWriter()
+/*
+ void ButterflyFlockApp::initMovieWriter()
 {
     fs::path path = getSaveFilePath();
     if( path.empty() == false)
@@ -246,6 +249,6 @@ void ButterflyFlockApp::initMovieWriter()
         mMovieWriter = qtime::MovieWriter( path, getWindowWidth(),getWindowHeight(), format );
         }
 }
-
+*/
 
 CINDER_APP_NATIVE( ButterflyFlockApp, RendererGl )

@@ -11,6 +11,17 @@
 #include "cinder/Color.h"
 #include <vector>
 
+#include "cinder/gl/gl.h"
+//#include "cinder/gl/GlslProg.h"
+#include "cinder/ObjLoader.h"
+#include "cinder/gl/Vbo.h"
+//#include "MyCamUI.h"
+#include "cinder/Perlin.h"
+
+using namespace ci;
+using namespace ci::app;
+
+
 class Mover {
 public:
     // CONSTRUCTOR
@@ -44,4 +55,18 @@ public:
     
 	bool		mIsDead;
 	bool		mFollowed;
+    
+    
+    void xformGeo();
+    
+    //params::InterfaceGlRef        mParams;
+    
+    //gl::GlslProg        mShader;
+    TriMesh                        mMesh;
+    gl::VboMesh                mVBO;
+    //MyCamUI         mMyCam;
+    Perlin                        mPerlin;
+    
+    float                        mBendAmount;
+    int                                mVertexNumber;
 };
